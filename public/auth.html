@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Đăng nhập — ThiBangLai.vn</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/auth.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚗</text></svg>">
+</head>
+<body>
+
+<div class="auth-page">
+  <div class="auth-card fade-in">
+
+    <!-- Logo -->
+    <div class="auth-logo">
+      <div class="auth-logo-icon">🚗</div>
+      <div class="auth-logo-text">ThiBangLai.vn</div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login"    onclick="switchTab('login')">Đăng nhập</button>
+      <button class="auth-tab"        id="tab-register" onclick="switchTab('register')">Đăng ký</button>
+    </div>
+
+    <!-- ── ĐĂNG NHẬP ── -->
+    <div class="auth-form active" id="form-login">
+      <div class="auth-title">Chào mừng trở lại 👋</div>
+      <div class="auth-sub">Đăng nhập để lưu lịch sử ôn tập và theo dõi tiến độ</div>
+
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" id="login-email" placeholder="example@email.com" autocomplete="email">
+        <div class="form-error" id="login-email-err"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mật khẩu</label>
+        <div class="password-wrap">
+          <input class="form-input" type="password" id="login-password" placeholder="Nhập mật khẩu" autocomplete="current-password">
+          <button class="password-toggle" onclick="togglePwd('login-password', this)" type="button">👁</button>
+        </div>
+        <div class="form-error" id="login-pass-err"></div>
+      </div>
+
+      <button class="btn btn-primary btn-block btn-lg" id="login-btn" onclick="doLogin()">
+        🔐 Đăng nhập
+      </button>
+
+      <div class="auth-divider">hoặc</div>
+
+      <button class="btn btn-ghost btn-block" onclick="loginDemo()">
+        🚀 Dùng thử không cần đăng ký
+      </button>
+
+      <div class="auth-footer">
+        Chưa có tài khoản? <a onclick="switchTab('register')">Đăng ký ngay</a>
+      </div>
+    </div>
+
+    <!-- ── ĐĂNG KÝ ── -->
+    <div class="auth-form" id="form-register">
+      <div class="auth-title">Tạo tài khoản mới 🎉</div>
+      <div class="auth-sub">Miễn phí hoàn toàn — lưu tiến độ và theo dõi kết quả thi</div>
+
+      <div class="form-group">
+        <label class="form-label">Họ và tên</label>
+        <input class="form-input" type="text" id="reg-name" placeholder="Nguyễn Văn A" autocomplete="name">
+        <div class="form-error" id="reg-name-err"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" id="reg-email" placeholder="example@email.com" autocomplete="email">
+        <div class="form-error" id="reg-email-err"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mật khẩu</label>
+        <div class="password-wrap">
+          <input class="form-input" type="password" id="reg-password" placeholder="Tối thiểu 6 ký tự" autocomplete="new-password">
+          <button class="password-toggle" onclick="togglePwd('reg-password', this)" type="button">👁</button>
+        </div>
+        <div class="form-hint">Tối thiểu 6 ký tự</div>
+        <div class="form-error" id="reg-pass-err"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Xác nhận mật khẩu</label>
+        <div class="password-wrap">
+          <input class="form-input" type="password" id="reg-confirm" placeholder="Nhập lại mật khẩu" autocomplete="new-password">
+          <button class="password-toggle" onclick="togglePwd('reg-confirm', this)" type="button">👁</button>
+        </div>
+        <div class="form-error" id="reg-confirm-err"></div>
+      </div>
+
+      <button class="btn btn-primary btn-block btn-lg" id="reg-btn" onclick="doRegister()">
+        ✅ Tạo tài khoản
+      </button>
+
+      <div class="auth-footer">
+        Đã có tài khoản? <a onclick="switchTab('login')">Đăng nhập</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SDK Supabase v2 -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/UI.js"></script>
+
+
+<script>
+  // Tự động đồng bộ tài khoản cũ từ local storage lên Supabase nếu có
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof Auth.migrateLocalUsersToSupabase === 'function') {
+      Auth.migrateLocalUsersToSupabase();
+    }
+  });
+
+  // Nếu đã đăng nhập thì redirect về trang chủ
+  if (Auth.currentUser()) window.location.href = 'index.html';
+
+  // Lấy redirect url từ query string
+  const params   = new URLSearchParams(window.location.search);
+  const redirect = params.get('redirect') || 'index.html';
+
+  function switchTab(tab) {
+    document.getElementById('tab-login').classList.toggle('active',    tab === 'login');
+    document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+    document.getElementById('form-login').classList.toggle('active',    tab === 'login');
+    document.getElementById('form-register').classList.toggle('active', tab === 'register');
+    clearErrors();
+  }
+
+  function clearErrors() {
+    document.querySelectorAll('.form-error').forEach(el => { el.textContent = ''; el.classList.remove('show'); });
+    document.querySelectorAll('.form-input').forEach(el => el.classList.remove('error'));
+  }
+
+  function showErr(id, msg) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.add('show');
+    // highlight input
+    const inputId = id.replace('-err','').replace('login-email','login-email').replace('login-pass','login-password').replace('reg-name','reg-name').replace('reg-email','reg-email').replace('reg-pass','reg-password').replace('reg-confirm','reg-confirm');
+    document.getElementById(inputId)?.classList.add('error');
+  }
+
+  function togglePwd(id, btn) {
+    const inp = document.getElementById(id);
+    if (inp.type === 'password') { inp.type = 'text';      btn.textContent = '🙈'; }
+    else                         { inp.type = 'password'; btn.textContent = '👁'; }
+  }
+
+  async function doLogin() {
+    clearErrors();
+    const email    = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    let valid = true;
+    if (!email)    { showErr('login-email-err', 'Vui lòng nhập email'); valid = false; }
+    if (!password) { showErr('login-pass-err',  'Vui lòng nhập mật khẩu'); valid = false; }
+    if (!valid) return;
+
+    const btn = document.getElementById('login-btn');
+    btn.disabled = true; btn.textContent = 'Đang đăng nhập...';
+
+    const res = await Auth.login({ email, password });
+    btn.disabled = false; btn.textContent = '🔐 Đăng nhập';
+
+    if (res.ok) {
+      if (typeof Toast !== 'undefined') Toast.success('Đăng nhập thành công! Chào ' + res.user.name);
+      setTimeout(() => window.location.href = redirect, 800);
+    } else {
+      showErr('login-pass-err', res.msg);
+    }
+  }
+
+  async function doRegister() {
+    clearErrors();
+    const name     = document.getElementById('reg-name').value.trim();
+    const email    = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value;
+    const confirm  = document.getElementById('reg-confirm').value;
+    let valid = true;
+    if (!name)               { showErr('reg-name-err',    'Vui lòng nhập họ tên'); valid = false; }
+    if (!email || !email.includes('@')) { showErr('reg-email-err', 'Email không hợp lệ'); valid = false; }
+    if (password.length < 6) { showErr('reg-pass-err',    'Mật khẩu tối thiểu 6 ký tự'); valid = false; }
+    if (password !== confirm) { showErr('reg-confirm-err', 'Mật khẩu xác nhận không khớp'); valid = false; }
+    if (!valid) return;
+
+    const btn = document.getElementById('reg-btn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Đang tạo tài khoản...'; }
+
+    const res = await Auth.register({ name, email, password });
+    if (btn) { btn.disabled = false; btn.textContent = '✅ Tạo tài khoản'; }
+
+    if (res.ok) {
+      if (typeof Toast !== 'undefined') Toast.success('Tạo tài khoản thành công! Chào mừng ' + res.user.name);
+      setTimeout(() => window.location.href = redirect, 800);
+    } else {
+      showErr('reg-email-err', res.msg);
+    }
+  }
+
+  async function loginDemo() {
+    const demo = { name: 'Khách', email: 'demo@thibang.vn', password: 'demo123456' };
+    await Auth.register(demo);
+    await Auth.login(demo);
+    if (typeof Toast !== 'undefined') Toast.success('Đang dùng chế độ khách!');
+    setTimeout(() => window.location.href = redirect, 800);
+  }
+
+  // Enter để submit
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    if (document.getElementById('form-login').classList.contains('active')) doLogin();
+    else doRegister();
+  });
+</script>
+</body>
+</html>

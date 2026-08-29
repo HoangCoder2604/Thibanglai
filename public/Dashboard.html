@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hồ sơ của tôi — ThiBangLai.vn</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/chatbot.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚗</text></svg>">
+</head>
+<body>
+
+<nav class="navbar" id="navbar"></nav>
+
+<div class="section fade-in" style="max-width:900px; margin: 0 auto; padding: 20px;">
+
+  <!-- Profile header -->
+  <div class="card card-pad" style="margin-bottom:24px; display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+    <div id="dash-avatar" style="width:72px; height:72px; border-radius:50%; background:var(--primary, #2563eb); color:white; font-family:'Lexend',sans-serif; font-size:1.6rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+      --
+    </div>
+    <div style="flex:1;">
+      <div style="font-family:'Lexend',sans-serif; font-size:1.4rem; font-weight:700; margin-bottom:4px;" id="dash-name">Đang tải...</div>
+      <div style="font-size:.88rem; color:var(--text-muted, #64748b);" id="dash-email">...</div>
+      <div style="margin-top:8px; font-size:.8rem; color:var(--text-muted, #64748b);" id="dash-joined">📅 Tham gia: --</div>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="Auth.logout()">🚪 Đăng xuất</button>
+  </div>
+
+  <!-- Stats -->
+  <h2 class="section-title" style="margin-bottom:14px;">📊 Thống kê của tôi</h2>
+  <div class="stat-grid" style="margin-bottom:28px;">
+    <div class="stat-card">
+      <div class="stat-val" id="stat-exams">0</div>
+      <div class="stat-label">Lần thi</div>
+    </div>
+    <div class="stat-card success">
+      <div class="stat-val" id="stat-passed">0</div>
+      <div class="stat-label">Lần đậu</div>
+    </div>
+    <div class="stat-card danger">
+      <div class="stat-val" id="stat-failed">0</div>
+      <div class="stat-label">Lần trượt</div>
+    </div>
+    <div class="stat-card warning">
+      <div class="stat-val" id="stat-rate">0%</div>
+      <div class="stat-label">Tỷ lệ đậu</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="stat-correct">0</div>
+      <div class="stat-label">Tổng câu đúng</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="stat-accuracy">0%</div>
+      <div class="stat-label">Tỷ lệ câu đúng</div>
+    </div>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="card card-pad" style="margin-bottom:24px;">
+    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+      <span style="font-weight:600;">Tỷ lệ đậu thi</span>
+      <span id="prog-label" style="font-weight:700; color:var(--primary, #2563eb);">0%</span>
+    </div>
+    <div class="progress-wrap" style="height:12px; background:#e2e8f0; border-radius:6px; overflow:hidden;">
+      <div class="progress-fill" id="prog-bar" style="width:0%; height:100%; transition: width 0.4s ease;"></div>
+    </div>
+    <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:.78rem; color:var(--text-muted, #64748b);">
+      <span>0%</span><span>Mục tiêu: 100%</span>
+    </div>
+  </div>
+
+  <!-- Recent Exams Table / History -->
+  <h2 class="section-title" style="margin-bottom:14px;">📜 Lịch sử làm bài gần đây</h2>
+  <div class="card card-pad" style="margin-bottom:32px; overflow-x:auto;">
+    <table style="width:100%; border-collapse:collapse; text-align:left; font-size:.9rem;">
+      <thead>
+        <tr style="border-bottom:2px solid #e2e8f0; color:var(--text-muted, #64748b);">
+          <th style="padding:10px;">Hạng</th>
+          <th style="padding:10px;">Điểm số</th>
+          <th style="padding:10px;">Kết quả</th>
+          <th style="padding:10px;">Thời gian</th>
+        </tr>
+      </thead>
+      <tbody id="exam-history-list">
+        <tr>
+          <td colspan="4" style="padding:16px; text-align:center; color:var(--text-muted, #64748b);">Đang tải lịch sử thi...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Quick actions -->
+  <h2 class="section-title" style="margin-bottom:14px;">🚀 Hành động nhanh</h2>
+  <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px; margin-bottom:32px;">
+    <a href="index.html" class="card card-pad" style="text-align:center; text-decoration:none; cursor:pointer; transition:all .2s;">
+      <div style="font-size:2rem; margin-bottom:8px;">🎯</div>
+      <div style="font-weight:600; margin-bottom:4px;">Thi thử</div>
+      <div style="font-size:.8rem; color:var(--text-muted, #64748b);">Chọn hạng bằng và bắt đầu</div>
+    </a>
+    <a href="critical.html" class="card card-pad" style="text-align:center; text-decoration:none; cursor:pointer; transition:all .2s;">
+      <div style="font-size:2rem; margin-bottom:8px;">⚠️</div>
+      <div style="font-weight:600; margin-bottom:4px;">Ôn điểm liệt</div>
+      <div style="font-size:.8rem; color:var(--text-muted, #64748b);">Câu hỏi quan trọng nhất</div>
+    </a>
+    <div class="card card-pad" style="text-align:center; cursor:pointer; transition:all .2s;" onclick="openModal('edit-modal')">
+      <div style="font-size:2rem; margin-bottom:8px;">✏️</div>
+      <div style="font-weight:600; margin-bottom:4px;">Cập nhật hồ sơ</div>
+      <div style="font-size:.8rem; color:var(--text-muted, #64748b);">Thay đổi tên hiển thị</div>
+    </div>
+    <div class="card card-pad" style="text-align:center; cursor:pointer; transition:all .2s;" onclick="confirmReset()">
+      <div style="font-size:2rem; margin-bottom:8px;">🔄</div>
+      <div style="font-weight:600; margin-bottom:4px;">Đặt lại thống kê</div>
+      <div style="font-size:.8rem; color:var(--text-muted, #64748b);">Xoá lịch sử kết quả</div>
+    </div>
+  </div>
+
+  <!-- License links -->
+  <h2 class="section-title" style="margin-bottom:14px;">📋 Thi theo hạng bằng</h2>
+  <div id="license-quick-grid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:12px;"></div>
+
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <div class="modal-title">✏️ Cập nhật hồ sơ</div>
+    <div class="form-group" style="margin-top:12px;">
+      <label class="form-label">Tên hiển thị</label>
+      <input type="text" class="form-input" id="edit-name" placeholder="Họ và tên">
+    </div>
+    <div class="modal-actions" style="margin-top:16px; display:flex; gap:8px; justify-content:flex-end;">
+      <button class="btn btn-ghost" onclick="closeModal('edit-modal')">Huỷ</button>
+      <button class="btn btn-primary" id="save-name-btn" onclick="saveName()">💾 Lưu</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="chatbot-panel" id="chatbot-panel">
+  <div class="chatbot-header">
+    <div class="chatbot-avatar">🤖</div>
+    <div class="chatbot-header-info">
+      <div class="chatbot-name">AI Hỗ trợ Bằng Lái</div>
+      <div class="chatbot-status">Gemini AI · Sẵn sàng</div>
+    </div>
+    <button style="background:none;border:none;color:rgba(255,255,255,.7);cursor:pointer;font-size:.85rem;padding:4px 6px;" id="chatbot-key-btn">🔑</button>
+    <button class="chatbot-close" id="chatbot-close">✕</button>
+  </div>
+  <div class="chatbot-messages" id="chatbot-messages"></div>
+  <div class="chatbot-quick-btns">
+    <button class="quick-btn" data-msg="Tôi nên ôn thi bằng lái theo thứ tự nào?">📚 Thứ tự ôn</button>
+    <button class="quick-btn" data-msg="Mẹo vượt qua kỳ thi lý thuyết bằng lái">💡 Mẹo thi</button>
+  </div>
+  <div class="chatbot-input-wrap">
+    <textarea class="chatbot-input" id="chatbot-input" placeholder="Hỏi AI..." rows="1"></textarea>
+    <button class="chatbot-send" id="chatbot-send">➤</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="chatbot-key-modal">
+  <div class="modal">
+    <div class="modal-title">🔑 Cài đặt Gemini API Key</div>
+    <div class="modal-sub">Lấy key miễn phí tại <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--primary)">aistudio.google.com</a></div>
+    <div class="form-group" style="margin-top:12px;">
+      <label class="form-label">API Key</label>
+      <input type="password" class="form-input" id="gemini-key-input" placeholder="AIza...">
+    </div>
+    <div class="modal-actions" style="margin-top:16px; display:flex; gap:8px; justify-content:flex-end;">
+      <button class="btn btn-ghost" id="cancel-key-btn">Huỷ</button>
+      <button class="btn btn-primary" id="save-key-btn">💾 Lưu</button>
+    </div>
+  </div>
+</div>
+
+<!-- NẠP CÁC SCRIPT -->
+<!-- NẠP CÁC SCRIPT (Đã loại bỏ dashboard.js thừa để tránh gọi trùng lặp) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/UI.js"></script>
+
+<script src="js/app.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    if (typeof Auth !== 'undefined' && typeof Auth.requireAuth === 'function') {
+      const isAuthenticated = await Auth.requireAuth();
+      if (!isAuthenticated) return;
+    }
+
+    if (typeof injectNavbar === 'function') injectNavbar('dashboard');
+    if (typeof initChatbotUI === 'function') initChatbotUI();
+
+    await loadUserProfile();
+    renderLicenseGrid();
+  });
+
+  async function loadUserProfile() {
+    try {
+      let rawUser = null;
+      const sb = window.supabaseClient || window.supabase;
+      if (sb && sb.auth) {
+        const { data } = await sb.auth.getUser();
+        rawUser = data?.user;
+      }
+      
+      if (!rawUser && typeof Auth !== 'undefined' && typeof Auth.currentUser === 'function') {
+        rawUser = await Auth.currentUser();
+      }
+
+      if (!rawUser) return;
+
+      const user = rawUser.user ? rawUser.user : rawUser;
+
+      const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.name || user.email?.split('@')[0] || 'Người dùng';
+      const initials = displayName.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+      
+      document.getElementById('dash-avatar').textContent = initials;
+      document.getElementById('dash-name').textContent   = displayName;
+      document.getElementById('dash-email').textContent  = user.email || '–';
+      
+      const rawDate = user.created_at || user.createdAt || user.user_metadata?.created_at;
+      if (rawDate) {
+        const dateObj = new Date(rawDate);
+        if (!isNaN(dateObj.getTime())) {
+          const formattedDate = `${String(dateObj.getDate()).padStart(2, '0')}/${String(dateObj.getMonth() + 1).padStart(2, '0')}/${dateObj.getFullYear()}`;
+          document.getElementById('dash-joined').textContent = '📅 Tham gia: ' + formattedDate;
+        } else {
+          document.getElementById('dash-joined').textContent = '📅 Tham gia: Chưa xác định';
+        }
+      } else {
+        document.getElementById('dash-joined').textContent = '📅 Tham gia: Chưa xác định';
+      }
+      
+      const editNameEl = document.getElementById('edit-name');
+      if (editNameEl) editNameEl.value = displayName;
+
+      // LẤY DỮ LIỆU THI VÀ ĐỔ VÀO CÁC Ô THỐNG KÊ
+      if (user.id) {
+        await loadExamStatsAndHistory(user.id);
+      }
+
+    } catch (error) {
+      console.error('Lỗi khi tải thông tin hồ sơ:', error);
+    }
+  }
+
+  async function loadExamStatsAndHistory(userId) {
+    const sb = window.supabaseClient || window.supabase;
+    if (!sb) return;
+
+    try {
+      const { data: results, error } = await sb
+        .from('exam_results')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error("Lỗi lấy dữ liệu exam_results:", error.message);
+        return;
+      }
+
+      let exams = results ? results.length : 0;
+      let passed = 0;
+      let totalCorrect = 0;
+      let totalQ = 0;
+
+      const historyContainer = document.getElementById('exam-history-list');
+
+      if (exams > 0) {
+        let historyHTML = '';
+        results.forEach(item => {
+          if (item.is_passed) passed++;
+          totalCorrect += Number(item.score || 0);
+          totalQ += Number(item.total_questions || 0);
+
+          const timeStr = item.created_at 
+            ? new Date(item.created_at).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' }) 
+            : 'Vừa xong';
+
+          historyHTML += `
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:12px 10px; font-weight:700;">Hạng ${item.license_id || 'A1'}</td>
+              <td style="padding:12px 10px;">${item.score}/${item.total_questions}</td>
+              <td style="padding:12px 10px;">
+                <span class="badge" style="padding:3px 8px; border-radius:4px; font-size:.78rem; color:white; background:${item.is_passed ? '#22c55e' : '#ef4444'}">
+                  ${item.is_passed ? 'ĐẠT' : 'TRƯỢT'}
+                </span>
+              </td>
+              <td style="padding:12px 10px; color:var(--text-muted, #64748b); font-size:.8rem;">${timeStr}</td>
+            </tr>
+          `;
+        });
+        if (historyContainer) historyContainer.innerHTML = historyHTML;
+      } else {
+        if (historyContainer) {
+          historyContainer.innerHTML = `
+            <tr>
+              <td colspan="4" style="padding:16px; text-align:center; color:var(--text-muted, #64748b);">Chưa có dữ liệu làm bài thi. Hãy bắt đầu bài thi đầu tiên!</td>
+            </tr>`;
+        }
+      }
+
+      // Cập nhật các chỉ số thống kê lên các ô tương ứng
+      const failed  = exams - passed;
+      const rate    = exams > 0 ? Math.round((passed / exams) * 100) : 0;
+      const acc     = totalQ > 0 ? Math.round((totalCorrect / totalQ) * 100) : 0;
+
+      document.getElementById('stat-exams').textContent    = exams;
+      document.getElementById('stat-passed').textContent   = passed;
+      document.getElementById('stat-failed').textContent   = failed;
+      document.getElementById('stat-rate').textContent     = rate + '%';
+      document.getElementById('stat-correct').textContent  = totalCorrect;
+      document.getElementById('stat-accuracy').textContent = acc + '%';
+      
+      const progressBar = document.getElementById('prog-bar');
+      if (progressBar) {
+        progressBar.style.width = rate + '%';
+        progressBar.style.background = rate >= 80 ? 'var(--success, #22c55e)' : 'var(--primary, #2563eb)';
+      }
+      const progLabel = document.getElementById('prog-label');
+      if (progLabel) progLabel.textContent = rate + '%';
+
+    } catch (err) {
+      console.error("Lỗi xử lý bảng kết quả thi:", err);
+    }
+  }
+
+  function renderLicenseGrid() {
+    const quickGrid = document.getElementById('license-quick-grid');
+    if (quickGrid && typeof LICENSES !== 'undefined') {
+      quickGrid.innerHTML = LICENSES.map(l => `
+        <a href="exam.html?license=${l.id}" class="card card-pad" style="text-align:center; text-decoration:none; transition:all .2s; border-top:4px solid ${l.color};">
+          <div style="font-size:1.6rem; margin-bottom:6px;">${l.vehicle}</div>
+          <div style="font-family:'Lexend',sans-serif; font-weight:700; color:${l.color}; font-size:1.1rem;">${l.id}</div>
+          <div style="font-size:.75rem; color:var(--text-muted, #64748b); margin-top:4px;">${l.questions} câu · ${l.time} phút</div>
+        </a>`).join('');
+    }
+  }
+
+  async function saveName() {
+    const nameInput = document.getElementById('edit-name');
+    const newName = nameInput ? nameInput.value.trim() : '';
+
+    if (!newName) {
+      if (window.Toast) Toast.error('Vui lòng nhập tên!');
+      else alert('Vui lòng nhập tên!');
+      return;
+    }
+
+    const saveBtn = document.getElementById('save-name-btn');
+    if (saveBtn) {
+      saveBtn.disabled = true;
+      saveBtn.textContent = '⏳ Đang lưu...';
+    }
+
+    try {
+      const sb = window.supabaseClient || window.supabase;
+      if (typeof Auth !== 'undefined' && typeof Auth.updateProfile === 'function') {
+        const result = await Auth.updateProfile({ full_name: newName, name: newName });
+        if (result && result.error) throw result.error;
+      } 
+      else if (sb && sb.auth) {
+        const { error } = await sb.auth.updateUser({
+          data: { full_name: newName, name: newName }
+        });
+        if (error) throw error;
+      }
+
+      if (typeof closeModal === 'function') {
+        closeModal('edit-modal');
+      } else {
+        const modal = document.getElementById('edit-modal');
+        if (modal) modal.classList.remove('active');
+      }
+
+      if (window.Toast) Toast.success('Đã cập nhật tên thành công!');
+      else alert('Đã cập nhật tên thành công!');
+      
+      await loadUserProfile();
+
+    } catch (err) {
+      console.error('Lỗi chi tiết khi lưu tên:', err);
+      const errMsg = err.message || 'Có lỗi xảy ra khi lưu thông tin!';
+      if (window.Toast) Toast.error('Lỗi: ' + errMsg);
+      else alert('Có lỗi xảy ra khi lưu thông tin: ' + errMsg);
+    } finally {
+      if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.textContent = '💾 Lưu';
+      }
+    }
+  }
+
+  async function confirmReset() {
+    if (!confirm('Bạn có chắc muốn xoá toàn bộ thống kê thi của mình trên hệ thống?')) return;
+    
+    try {
+      const sb = window.supabaseClient || window.supabase;
+      let user = null;
+      if (sb && sb.auth) {
+        const { data } = await sb.auth.getUser();
+        user = data?.user;
+      }
+
+      if (user && sb) {
+        const { error } = await sb
+          .from('exam_results')
+          .delete()
+          .eq('user_id', user.id);
+
+        if (error) throw error;
+      }
+
+      if (window.Toast) Toast.success('Đã đặt lại thống kê!');
+      await loadUserProfile();
+
+    } catch (error) {
+      console.error('Lỗi khi reset thống kê:', error);
+      if (window.Toast) Toast.error('Lỗi: ' + error.message);
+    }
+  }
+</script>
+<script src="js/chatbot.js"></script>
+</body>
+</html>

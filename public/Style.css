@@ -1,0 +1,438 @@
+
+/* ============================================================
+   RESET & ROOT
+   ============================================================ */
+:root {
+  --primary:       #0052CC;
+  --primary-dark:  #003A99;
+  --primary-light: #E8F0FF;
+  --accent:        #FF6B35;
+  --accent-light:  #FFF0EB;
+  --success:       #0A9E6E;
+  --success-light: #E6F7F2;
+  --danger:        #D63031;
+  --danger-light:  #FDEAEA;
+  --warning:       #F59E0B;
+  --warning-light: #FFFBEB;
+  --text:          #1A1F36;
+  --text-muted:    #6B7280;
+  --border:        #E5E7EB;
+  --bg:            #F4F6FB;
+  --white:         #FFFFFF;
+  --card-shadow:   0 2px 16px rgba(0,82,204,0.08);
+  --card-hover:    0 8px 32px rgba(0,82,204,0.15);
+}
+ 
+* { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+body {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+ 
+/* ============================================================
+   HEADER
+   ============================================================ */
+.header {
+  background: var(--white);
+  border-bottom: 2px solid var(--primary-light);
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 12px rgba(0,82,204,0.07);
+}
+.header-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; height: 64px;
+}
+.logo {
+  display: flex; align-items: center; gap: 10px;
+  font-family: 'Lexend', sans-serif;
+  font-size: 1.25rem; font-weight: 700;
+  color: var(--primary); text-decoration: none;
+}
+.logo-icon {
+  width: 38px; height: 38px;
+  background: var(--primary);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem;
+}
+.header-stats { display: flex; gap: 20px; align-items: center; }
+.stat-pill {
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 0.78rem; font-weight: 600;
+  padding: 4px 12px; border-radius: 20px;
+}
+ 
+/* ============================================================
+   SCREENS
+   ============================================================ */
+.screen { display: none; }
+.screen.active { display: block; }
+ 
+/* ============================================================
+   HOME — HERO
+   ============================================================ */
+.home-hero {
+  background: linear-gradient(135deg, var(--primary) 0%, #003399 100%);
+  color: white; text-align: center;
+  padding: 60px 24px 80px;
+  position: relative; overflow: hidden;
+}
+.home-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.hero-badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  font-size: 0.78rem; font-weight: 600;
+  padding: 5px 14px; border-radius: 20px;
+  margin-bottom: 16px; letter-spacing: 0.5px;
+}
+.hero-title {
+  font-family: 'Lexend', sans-serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 700; margin-bottom: 12px; line-height: 1.2;
+}
+.hero-sub {
+  font-size: 1rem; opacity: 0.85;
+  max-width: 500px; margin: 0 auto 32px;
+}
+.hero-numbers { display: flex; justify-content: center; gap: 32px; font-size: 0.9rem; }
+.hero-num { text-align: center; }
+.hero-num strong { display: block; font-size: 1.6rem; font-weight: 700; }
+.hero-num span { opacity: 0.75; font-size: 0.8rem; }
+ 
+/* ============================================================
+   HOME — LICENSE GRID
+   ============================================================ */
+.section { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
+.section-title {
+  font-family: 'Lexend', sans-serif;
+  font-size: 1.4rem; font-weight: 600;
+  margin-bottom: 6px;
+}
+.section-sub { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 28px; }
+ 
+.license-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+}
+.license-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 16px; padding: 24px;
+  cursor: pointer; transition: all 0.25s ease;
+  position: relative; overflow: hidden;
+}
+.license-card:hover {
+  border-color: var(--primary);
+  box-shadow: var(--card-hover);
+  transform: translateY(-3px);
+}
+.license-card::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 4px; border-radius: 16px 16px 0 0;
+}
+.license-card.cat-a::after { background: #FF6B35; }
+.license-card.cat-b::after { background: #0052CC; }
+.license-card.cat-c::after { background: #0A9E6E; }
+.license-card.cat-d::after { background: #7B3FF2; }
+.license-card.cat-e::after { background: #E84393; }
+.license-card.cat-f::after { background: #F59E0B; }
+ 
+.lc-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+.lc-badge {
+  font-family: 'Lexend', sans-serif;
+  font-size: 1.6rem; font-weight: 700;
+  width: 52px; height: 52px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+}
+.cat-a .lc-badge { background: #FF6B35; }
+.cat-b .lc-badge { background: #0052CC; }
+.cat-c .lc-badge { background: #0A9E6E; }
+.cat-d .lc-badge { background: #7B3FF2; }
+.cat-e .lc-badge { background: #E84393; }
+.cat-f .lc-badge { background: #F59E0B; }
+ 
+.lc-difficulty { font-size: 0.72rem; font-weight: 600; padding: 3px 9px; border-radius: 20px; }
+.diff-easy    { background: var(--success-light); color: var(--success); }
+.diff-medium  { background: var(--warning-light); color: #B45309; }
+.diff-hard    { background: var(--danger-light);  color: var(--danger); }
+ 
+.lc-title { font-size: 1.05rem; font-weight: 600; margin-bottom: 4px; }
+.lc-desc  { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.5; }
+.lc-meta  { display: flex; gap: 16px; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px; flex-wrap: wrap; }
+.lc-btn {
+  width: 100%;
+  background: var(--primary-light); color: var(--primary);
+  border: 1.5px solid var(--primary);
+  border-radius: 10px; padding: 10px;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 0.9rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+}
+.lc-btn:hover { background: var(--primary); color: white; }
+ 
+/* ============================================================
+   SETUP SCREEN
+   ============================================================ */
+.mode-tabs {
+  display: flex; gap: 8px; margin-bottom: 24px;
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: 12px; padding: 5px; width: fit-content;
+}
+.mode-tab {
+  padding: 8px 20px; border-radius: 9px;
+  font-size: 0.88rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+  color: var(--text-muted); border: none; background: none;
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+.mode-tab.active { background: var(--primary); color: white; }
+ 
+/* ============================================================
+   EXAM TOPBAR
+   ============================================================ */
+.exam-topbar {
+  background: var(--white);
+  border-bottom: 1.5px solid var(--border);
+  padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 56px;
+}
+.exam-info { display: flex; align-items: center; gap: 16px; }
+.exam-type-badge {
+  font-family: 'Lexend', sans-serif;
+  font-weight: 700; font-size: 1.1rem;
+  padding: 4px 14px; border-radius: 8px; color: white;
+}
+.exam-title-text { font-size: 0.88rem; color: var(--text-muted); }
+.timer-wrap { display: flex; align-items: center; gap: 8px; }
+.timer {
+  font-family: 'Lexend', sans-serif;
+  font-size: 1.3rem; font-weight: 700;
+  color: var(--primary); min-width: 64px; text-align: center;
+}
+.timer.urgent { color: var(--danger); animation: pulse 1s infinite; }
+ 
+/* ============================================================
+   EXAM LAYOUT
+   ============================================================ */
+.exam-layout {
+  max-width: 900px; margin: 0 auto; padding: 32px 24px;
+  display: grid; grid-template-columns: 1fr 280px; gap: 24px;
+}
+@media(max-width: 720px) {
+  .exam-layout { grid-template-columns: 1fr; }
+  .exam-sidebar { order: -1; }
+}
+ 
+.progress-bar-wrap { background: var(--border); height: 4px; border-radius: 4px; overflow: hidden; }
+.progress-bar-fill { height: 100%; background: var(--primary); transition: width 0.3s ease; border-radius: 4px; }
+ 
+/* ============================================================
+   QUESTION CARD
+   ============================================================ */
+.question-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 16px; padding: 28px;
+  box-shadow: var(--card-shadow);
+}
+.q-num {
+  font-size: 0.78rem; font-weight: 600; color: var(--primary);
+  letter-spacing: 0.5px; margin-bottom: 8px; text-transform: uppercase;
+}
+.q-critical {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--danger-light); color: var(--danger);
+  font-size: 0.72rem; font-weight: 600;
+  padding: 2px 8px; border-radius: 6px; margin-left: 8px;
+}
+.q-text { font-size: 1.05rem; font-weight: 500; margin-bottom: 20px; line-height: 1.65; }
+.q-image {
+  width: 100%; border-radius: 10px; border: 1px solid var(--border);
+  margin-bottom: 20px; background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  height: 160px; font-size: 3rem; color: var(--text-muted);
+}
+ 
+.options { display: flex; flex-direction: column; gap: 10px; }
+.option {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px 16px; border: 1.5px solid var(--border);
+  border-radius: 10px; cursor: pointer;
+  transition: all 0.18s ease; background: var(--white);
+}
+.option:hover:not(.disabled) { border-color: var(--primary); background: var(--primary-light); }
+.option.selected:not(.revealed) { border-color: var(--primary); background: var(--primary-light); }
+.option.correct  { border-color: var(--success); background: var(--success-light); }
+.option.wrong    { border-color: var(--danger);  background: var(--danger-light);  }
+.option.disabled { cursor: default; }
+.option-key {
+  width: 28px; height: 28px; min-width: 28px;
+  border-radius: 7px; border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem; font-weight: 700; color: var(--text-muted);
+  background: var(--bg); transition: all 0.18s;
+}
+.option.selected:not(.revealed) .option-key { background: var(--primary); color: white; border-color: var(--primary); }
+.option.correct .option-key { background: var(--success); color: white; border-color: var(--success); }
+.option.wrong   .option-key { background: var(--danger);  color: white; border-color: var(--danger);  }
+.option-text { font-size: 0.92rem; line-height: 1.5; padding-top: 4px; }
+ 
+.q-explain {
+  margin-top: 16px; padding: 14px 16px;
+  background: #FFF9E6; border: 1.5px solid #F59E0B;
+  border-radius: 10px; font-size: 0.85rem;
+  color: #92400E; line-height: 1.6; display: none;
+}
+.q-explain.show { display: block; }
+ 
+.q-nav {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-top: 24px;
+}
+ 
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+  padding: 10px 22px; border-radius: 10px;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 0.9rem; font-weight: 600;
+  cursor: pointer; border: none; transition: all 0.2s;
+}
+.btn-ghost   { background: var(--bg); color: var(--text-muted); border: 1.5px solid var(--border); }
+.btn-ghost:hover { background: var(--border); color: var(--text); }
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-success { background: var(--success); color: white; }
+.btn-danger  { background: var(--danger);  color: white; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+ 
+.exam-end-btn {
+  padding: 10px 20px; border-radius: 10px;
+  background: var(--danger-light); color: var(--danger);
+  border: 1.5px solid var(--danger); font-size: 0.85rem;
+  font-weight: 600; cursor: pointer;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  transition: all 0.2s;
+}
+.exam-end-btn:hover { background: var(--danger); color: white; }
+ 
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+.sidebar-card {
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: 14px; padding: 20px;
+  box-shadow: var(--card-shadow); margin-bottom: 16px;
+}
+.sb-title {
+  font-size: 0.8rem; font-weight: 600; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px;
+}
+.score-display { text-align: center; }
+.score-num {
+  font-family: 'Lexend', sans-serif;
+  font-size: 2.2rem; font-weight: 700; color: var(--primary);
+}
+.score-label { font-size: 0.78rem; color: var(--text-muted); }
+ 
+/* Question dot grid */
+.q-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+.q-dot {
+  aspect-ratio: 1; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; font-weight: 600;
+  cursor: pointer; border: 1.5px solid var(--border);
+  background: var(--bg); color: var(--text-muted);
+  transition: all 0.15s;
+}
+.q-dot:hover    { border-color: var(--primary); color: var(--primary); }
+.q-dot.current  { border-color: var(--primary); background: var(--primary); color: white; }
+.q-dot.answered { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
+.q-dot.correct  { background: var(--success-light); border-color: var(--success); color: var(--success); }
+.q-dot.wrong    { background: var(--danger-light);  border-color: var(--danger);  color: var(--danger);  }
+.q-dot.skipped  { background: var(--warning-light); border-color: var(--warning); color: var(--warning); }
+ 
+/* ============================================================
+   RESULT SCREEN
+   ============================================================ */
+.result-wrap { max-width: 720px; margin: 0 auto; padding: 40px 24px; }
+.result-card {
+  background: var(--white); border-radius: 20px;
+  padding: 40px; text-align: center;
+  box-shadow: var(--card-shadow); border: 1.5px solid var(--border);
+  margin-bottom: 24px;
+}
+.result-icon  { font-size: 4rem; margin-bottom: 12px; }
+.result-title {
+  font-family: 'Lexend', sans-serif;
+  font-size: 1.8rem; font-weight: 700; margin-bottom: 8px;
+}
+.result-title.pass { color: var(--success); }
+.result-title.fail { color: var(--danger);  }
+.result-sub   { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 32px; }
+.result-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+.rs { padding: 16px; border-radius: 12px; border: 1.5px solid var(--border); }
+.rs-val   { font-family: 'Lexend', sans-serif; font-size: 1.6rem; font-weight: 700; margin-bottom: 4px; }
+.rs-label { font-size: 0.78rem; color: var(--text-muted); }
+.rs.success { background: var(--success-light); border-color: var(--success); }
+.rs.success .rs-val { color: var(--success); }
+.rs.danger  { background: var(--danger-light);  border-color: var(--danger);  }
+.rs.danger  .rs-val { color: var(--danger);  }
+.rs.info    { background: var(--primary-light); border-color: var(--primary); }
+.rs.info    .rs-val { color: var(--primary); }
+.result-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.result-actions .btn { padding: 12px 28px; font-size: 0.95rem; }
+ 
+/* Review list */
+.review-list { display: flex; flex-direction: column; gap: 16px; }
+.review-item {
+  background: var(--white); border-radius: 14px;
+  padding: 20px; border: 1.5px solid var(--border);
+}
+.review-item.ri-wrong   { border-color: var(--danger); border-left: 4px solid var(--danger); }
+.review-item.ri-correct { border-color: var(--success); border-left: 4px solid var(--success); }
+.ri-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.ri-badge  { font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; }
+.ri-badge.correct { background: var(--success-light); color: var(--success); }
+.ri-badge.wrong   { background: var(--danger-light);  color: var(--danger);  }
+.ri-qnum     { font-size: 0.78rem; color: var(--text-muted); }
+.ri-question { font-size: 0.92rem; font-weight: 500; margin-bottom: 10px; }
+.ri-answer   { font-size: 0.85rem; padding: 8px 12px; border-radius: 8px; }
+.ri-answer.yours       { background: var(--danger-light);  color: var(--danger);  margin-bottom: 6px; }
+.ri-answer.correct-ans { background: var(--success-light); color: var(--success); }
+ 
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+@keyframes pulse     { 0%,100%{opacity:1} 50%{opacity:0.6} }
+@keyframes fadeIn    { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+@keyframes slideIn   { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:none} }
+ 
+.fade-in  { animation: fadeIn  0.35s ease; }
+.slide-in { animation: slideIn 0.3s  ease; }
+ 
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media(max-width: 500px) {
+  .hero-numbers  { gap: 20px; }
+  .result-stats  { grid-template-columns: 1fr; }
+  .exam-topbar   { padding: 0 12px; gap: 8px; }
+  .timer         { font-size: 1rem; min-width: 50px; }
+}

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thi thử — ThiBangLai.vn</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/exam.css">
+  <link rel="stylesheet" href="css/chatbot.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚗</text></svg>">
+</head>
+<body>
+
+<!-- NAVBAR (chỉ hiện ở setup & result) -->
+<nav class="navbar" id="navbar" style="display:none"></nav>
+
+<!-- ============================================================
+     SETUP SCREEN
+     ============================================================ -->
+<div id="setup-screen">
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a class="nav-logo" href="index.html">
+        <div class="nav-logo-icon">🚗</div><span>ThiBangLai.vn</span>
+      </a>
+      <div id="nav-user-area-setup"></div>
+    </div>
+  </nav>
+
+  <div class="section fade-in" style="max-width:720px; margin: 0 auto; padding: 20px;">
+    <a href="index.html" class="btn btn-ghost btn-sm" style="margin-bottom:24px;">← Quay lại</a>
+
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:6px;">
+      <div id="setup-badge" style="width:56px;height:56px;border-radius:14px;background:var(--primary);display:flex;align-items:center;justify-content:center;color:white;font-family:'Lexend',sans-serif;font-size:1.4rem;font-weight:700;">--</div>
+      <div>
+        <h2 class="section-title" id="setup-title" style="margin-bottom:2px;">Đang tải...</h2>
+        <p style="color:var(--text-muted);font-size:.88rem;" id="setup-desc">Mô tả hạng bằng</p>
+      </div>
+    </div>
+
+    <!-- Mode tabs -->
+    <div style="margin:28px 0 20px;">
+      <p style="font-size:.82rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Chế độ thi</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <div class="mode-card active" id="mode-exam" onclick="setMode('exam')" style="flex:1;min-width:200px;padding:16px;border:2px solid var(--primary);border-radius:14px;cursor:pointer;background:var(--primary-light);transition:all .2s;">
+          <div style="font-size:1.5rem;margin-bottom:6px;">🎯</div>
+          <div style="font-weight:700;color:var(--primary);margin-bottom:4px;">Thi thử</div>
+          <div style="font-size:.8rem;color:var(--text-muted);">Đồng hồ đếm ngược, không hiện đáp án ngay, kết quả sau nộp bài</div>
+        </div>
+        <div class="mode-card" id="mode-practice" onclick="setMode('practice')" style="flex:1;min-width:200px;padding:16px;border:2px solid var(--border);border-radius:14px;cursor:pointer;transition:all .2s;">
+          <div style="font-size:1.5rem;margin-bottom:6px;">📚</div>
+          <div style="font-weight:700;margin-bottom:4px;">Luyện tập</div>
+          <div style="font-size:.8rem;color:var(--text-muted);">Hiện đáp án & giải thích ngay sau khi chọn, không giới hạn thời gian</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info cards (Questions, Time, Pass) -->
+    <div class="stat-grid" style="margin-bottom:28px;">
+      <div class="stat-card">
+        <div class="stat-val" id="setup-num-q">–</div>
+        <div class="stat-label">Số câu hỏi</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="setup-time">–</div>
+        <div class="stat-label">Phút làm bài</div>
+      </div>
+      <div class="stat-card success">
+        <div class="stat-val" id="setup-pass">–</div>
+        <div class="stat-label">Câu đúng để đậu</div>
+      </div>
+    </div>
+
+    <!-- Notice điểm liệt -->
+    <div style="background:var(--danger-light, #fef2f2);border:1.5px solid var(--danger, #ef4444);border-radius:12px;padding:14px 16px;margin-bottom:24px;font-size:.86rem;color:var(--danger, #ef4444);display:flex;gap:10px;align-items:flex-start;">
+      <span style="font-size:1.1rem;">⚠️</span>
+      <span><strong>Lưu ý điểm liệt:</strong> Trả lời sai bất kỳ câu điểm liệt nào là trượt ngay, dù các câu khác đúng hết. Hãy ôn kỹ <a href="critical.html" style="color:var(--danger, #ef4444);text-decoration:underline;">câu điểm liệt</a> trước khi thi!</span>
+    </div>
+
+    <button class="btn btn-primary btn-lg" id="btn-start-exam" onclick="startExam()">🚀 Bắt đầu thi</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     EXAM SCREEN
+     ============================================================ -->
+<div id="exam-screen" style="display:none;">
+
+  <!-- Topbar -->
+  <div class="exam-topbar">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div class="exam-badge" id="exam-badge">A1</div>
+      <div>
+        <div class="exam-mode-label" id="exam-mode-label">🎯 Thi thử</div>
+        <div class="exam-qcount">Câu <span id="q-current">1</span>/<span id="q-total">25</span></div>
+      </div>
+    </div>
+
+    <div class="exam-progress-wrap">
+      <div class="progress-wrap">
+        <div class="progress-fill" id="progress-fill" style="width:4%;"></div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span>⏱</span>
+      <div class="timer" id="timer">19:00</div>
+      <button class="btn btn-danger" id="btn-confirm-end" onclick="confirmEndExam()">📋 Nộp bài</button>
+    </div>
+  </div>
+
+  <!-- Layout -->
+  <div class="exam-layout">
+    <!-- Main -->
+    <div>
+      <div class="question-card" id="question-card">
+        <div class="q-label">
+          CÂU <span id="q-label-num">1</span>
+          <span class="q-critical-tag" id="q-critical-badge" style="display:none;">⚠️ Điểm liệt</span>
+        </div>
+        <div class="q-image" id="q-image" style="display:none;"></div>
+        <div class="q-text" id="q-text"></div>
+        <div class="options" id="options-container"></div>
+        <div class="q-explain" id="q-explain"></div>
+      </div>
+
+      <div class="q-nav">
+        <button class="btn btn-ghost" id="btn-prev" onclick="prevQuestion()">← Câu trước</button>
+        <div class="q-nav-right">
+          <button class="btn btn-ghost" id="btn-skip" onclick="skipQuestion()">Bỏ qua</button>
+          <button class="btn btn-primary" id="btn-next" onclick="nextQuestion()">Câu tiếp →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="exam-sidebar">
+     
+      <div class="sidebar-card">
+        <div class="sb-title">Danh sách câu</div>
+        <div class="q-grid" id="q-grid"></div>
+        <div style="margin-top:10px;font-size:.72rem;color:var(--text-muted);display:flex;flex-wrap:wrap;gap:6px;">
+          <span>⬜ Chưa làm</span>
+          <span style="color:var(--primary);">🟦 Đã chọn</span>
+          <span style="color:var(--warning, #f59e0b);">🟨 Bỏ qua</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================
+     RESULT SCREEN
+     ============================================================ -->
+<div id="result-screen" style="display:none;">
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a class="nav-logo" href="index.html">
+        <div class="nav-logo-icon">🚗</div><span>ThiBangLai.vn</span>
+      </a>
+    </div>
+  </nav>
+
+  <div class="result-wrap fade-in">
+    <div class="result-card">
+      <div class="result-icon" id="result-icon">🎉</div>
+      <div class="result-title" id="result-title">Chúc mừng!</div>
+      <div class="result-sub" id="result-sub"></div>
+
+      <div class="result-stats">
+        <div class="rs s"><div class="rs-val" id="rs-correct">0</div><div class="rs-label">Câu đúng</div></div>
+        <div class="rs d"><div class="rs-val" id="rs-wrong">0</div><div class="rs-label">Câu sai</div></div>
+        <div class="rs i"><div class="rs-val" id="rs-time">0:00</div><div class="rs-label">Thời gian</div></div>
+      </div>
+
+      <div class="result-score-box">
+        <div style="font-size:.85rem;color:var(--text-muted);margin-bottom:6px;">Điểm số</div>
+        <div class="result-score-big" id="rs-score-big">0/25</div>
+        <div id="rs-pass-status" style="margin-top:6px;font-size:.88rem;"></div>
+      </div>
+
+      <div class="result-actions">
+        <a href="index.html" class="btn btn-ghost">← Trang chủ</a>
+        <button class="btn btn-outline" id="btn-retry" onclick="startExam()">🔄 Thi lại</button>
+        <a href="critical.html" class="btn btn-danger">⚠️ Ôn điểm liệt</a>
+      </div>
+    </div>
+
+    <!-- Review -->
+    <div style="margin-bottom:16px;">
+      <h3 style="font-size:1.05rem;font-weight:600;margin-bottom:14px;">Xem lại bài làm</h3>
+      <div class="review-filters">
+        <button class="btn btn-sm btn-primary" id="btn-filter-all" onclick="renderReview('all')">Tất cả</button>
+        <button class="btn btn-sm btn-ghost" id="btn-filter-wrong" onclick="renderReview('wrong')">❌ Sai</button>
+        <button class="btn btn-sm btn-ghost" id="btn-filter-correct" onclick="renderReview('correct')">✅ Đúng</button>
+      </div>
+    </div>
+    <div class="review-list" id="review-list"></div>
+  </div>
+</div>
+
+
+<div class="chatbot-panel" id="chatbot-panel">
+  <div class="chatbot-header">
+    <div class="chatbot-avatar">🤖</div>
+    <div class="chatbot-header-info">
+      <div class="chatbot-name">AI Hỗ trợ Bằng Lái</div>
+      <div class="chatbot-status">Gemini AI · Sẵn sàng</div>
+    </div>
+    <button style="background:none;border:none;color:rgba(255,255,255,.7);cursor:pointer;font-size:.85rem;padding:4px 6px;" id="chatbot-key-btn">🔑</button>
+    <button class="chatbot-close" id="chatbot-close">✕</button>
+  </div>
+  <div class="chatbot-messages" id="chatbot-messages"></div>
+  <div class="chatbot-quick-btns">
+    <button class="quick-btn" data-msg="Giải thích câu điểm liệt là gì?">⚠️ Điểm liệt</button>
+    <button class="quick-btn" data-msg="Cách xử lý khi gặp xe ưu tiên trên đường">🚑 Xe ưu tiên</button>
+    <button class="quick-btn" data-msg="Phân biệt các loại biển báo giao thông">🚦 Biển báo</button>
+  </div>
+  <div class="chatbot-input-wrap">
+    <textarea class="chatbot-input" id="chatbot-input" placeholder="Hỏi về luật, biển báo..." rows="1"></textarea>
+    <button class="chatbot-send" id="chatbot-send">➤</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="chatbot-key-modal">
+  <div class="modal">
+    <div class="modal-title">🔑 Cài đặt Gemini API Key</div>
+    <div class="modal-sub">Lấy key miễn phí tại <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--primary)">aistudio.google.com</a></div>
+    <div class="form-group">
+      <label class="form-label">API Key</label>
+      <input type="password" class="form-input" id="gemini-key-input" placeholder="AIza...">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="cancel-key-btn">Huỷ</button>
+      <button class="btn btn-primary" id="save-key-btn">💾 Lưu</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCRIPTS HỆ THỐNG -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/UI.js"></script>
+<script src="js/exam.js"></script>
+
+<script src="js/app.js"></script>
+<script src="js/result.js"></script>
+
+
+<script>
+  // Khởi tạo và thiết lập dữ liệu ban đầu
+  document.addEventListener('DOMContentLoaded', async () => {
+    // 1. Render nav user
+    const navSetup = document.getElementById('nav-user-area-setup');
+    if (navSetup && typeof Auth !== 'undefined' && typeof Auth.currentUser === 'function') {
+      try {
+        const u = await Auth.currentUser();
+        if (u) {
+          const name = u.user_metadata?.full_name || u.name || u.email || 'User';
+          const initials = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+          navSetup.innerHTML = `<div class="nav-avatar" title="${name}">${initials}</div>`;
+        } else {
+          navSetup.innerHTML = `<a href="auth.html" class="btn btn-primary btn-sm">Đăng nhập</a>`;
+        }
+      } catch (err) {
+        navSetup.innerHTML = `<a href="auth.html" class="btn btn-primary btn-sm">Đăng nhập</a>`;
+      }
+    }
+
+    // 2. Lấy tham số 'license' từ URL và đồng bộ biến toàn cục
+    const params = new URLSearchParams(window.location.search);
+    const licenseId = params.get('license') || 'A1';
+
+    let licenseObj = null;
+    if (typeof LICENSES !== 'undefined' && Array.isArray(LICENSES)) {
+      licenseObj = LICENSES.find(l => l.id === licenseId) || LICENSES[0];
+    }
+
+    if (!licenseObj) {
+      licenseObj = { id: 'A1', vehicle: 'Xe máy', title: 'Hạng A1', questions: 25, time: 19, pass: 21, color: '#2563eb', desc: 'Bằng lái xe máy dưới 175cc' };
+    }
+
+    window.currentLicense = licenseObj;
+
+    // Trích xuất các thuộc tính an toàn (tránh gán sai khi khác tên thuộc tính)
+    const numQ    = licenseObj.questions || licenseObj.totalQuestions || licenseObj.numQuestions || 25;
+    const timeVal = licenseObj.time || licenseObj.timeLimit || licenseObj.duration || 19;
+    const passVal = licenseObj.pass || licenseObj.passScore || licenseObj.minPass || 21;
+    const title   = licenseObj.title || licenseObj.name || (licenseObj.vehicle ? licenseObj.vehicle + ' ' + licenseObj.id : licenseObj.id);
+    const desc    = licenseObj.desc || licenseObj.description || 'Ôn thi lý thuyết bằng lái xe';
+
+    // 3. Cập nhật giao diện màn hình Setup
+    const setupBadge = document.getElementById('setup-badge');
+    if (setupBadge) {
+      setupBadge.textContent = licenseObj.id;
+      setupBadge.style.background = licenseObj.color || 'var(--primary)';
+    }
+
+    const setupTitle = document.getElementById('setup-title');
+    if (setupTitle) setupTitle.textContent = title;
+
+    const setupDesc = document.getElementById('setup-desc');
+    if (setupDesc) setupDesc.textContent = desc;
+
+    // Gán dữ liệu số câu hỏi, thời gian, điểm đạt lên 3 Card Stat
+    document.getElementById('setup-num-q').textContent = numQ;
+    document.getElementById('setup-time').textContent  = timeVal;
+    document.getElementById('setup-pass').textContent  = `${passVal}/${numQ}`;
+
+    // 4. Mặc định Chế độ thi
+    window.examMode = 'exam';
+
+    // 5. Khởi tạo Chatbot UI
+    if (typeof initChatbotUI === 'function') {
+      initChatbotUI();
+    }
+  });
+
+// Hàm chuyển đổi Chế độ Thi thử / Luyện tập
+function setMode(mode) {
+  // Đồng bộ trực tiếp với biến examMode trong exam.js
+  examMode = mode; 
+  window.examMode = mode;
+
+  ['exam', 'practice'].forEach(m => {
+    const el = document.getElementById('mode-' + m);
+    if (!el) return;
+    if (m === mode) {
+      el.style.borderColor = 'var(--primary)';
+      el.style.background  = 'var(--primary-light)';
+      const textEl = el.querySelector('div:nth-child(2)');
+      if (textEl) textEl.style.color = 'var(--primary)';
+    } else {
+      el.style.borderColor = 'var(--border)';
+      el.style.background  = 'white';
+      const textEl = el.querySelector('div:nth-child(2)');
+      if (textEl) textEl.style.color = 'var(--text)';
+    }
+  });
+}
+
+  // Hàm Filter xem lại bài làm
+  function toggleFilter(e, filter) {
+    document.querySelectorAll('.review-filters .btn').forEach(btn => {
+      btn.classList.remove('btn-primary');
+      btn.classList.add('btn-ghost');
+    });
+    if (e && e.target) {
+      e.target.classList.remove('btn-ghost');
+      e.target.classList.add('btn-primary');
+    }
+    if (typeof renderReview === 'function') {
+      renderReview(filter);
+    }
+  }
+</script>
+<script>
+  // Kiểm tra bắt buộc đăng nhập ngay khi vào trang thi
+  (async function() {
+    let isLoggedIn = false;
+    const sb = window.supabaseClient || window.supabase;
+    if (sb && typeof sb.auth?.getUser === 'function') {
+      try {
+        const { data } = await sb.auth.getUser();
+        if (data?.user) isLoggedIn = true;
+      } catch (e) {}
+    }
+    
+    if (!isLoggedIn && typeof Auth !== 'undefined') {
+      if (typeof Auth.checkLogin === 'function' && Auth.checkLogin()) isLoggedIn = true;
+      else if (typeof Auth.currentUser === 'function') {
+        const user = await Auth.currentUser();
+        if (user) isLoggedIn = true;
+      }
+    }
+
+    if (!isLoggedIn) {
+      alert('Vui lòng đăng nhập trước khi làm bài thi!');
+      window.location.href = 'auth.html';
+    }
+  })();
+</script>
+<script src="js/chatbot.js"></script>
+</body>
+</html>

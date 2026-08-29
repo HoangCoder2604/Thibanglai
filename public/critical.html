@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Câu điểm liệt — ThiBangLai.vn</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/exam.css">
+  <link rel="stylesheet" href="css/chatbot.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚗</text></svg>">
+</head>
+<body>
+
+<nav class="navbar" id="navbar"></nav>
+
+<!-- HERO nhỏ -->
+<div style="background:linear-gradient(135deg,#D63031,#c0392b);color:white;padding:40px 24px;text-align:center;">
+  <div style="font-size:2.5rem;margin-bottom:10px;">⚠️</div>
+  <h1 style="font-family:'Lexend',sans-serif;font-size:1.8rem;font-weight:700;margin-bottom:8px;">Câu Hỏi Điểm Liệt</h1>
+  <p style="opacity:.88;max-width:480px;margin:0 auto;font-size:.95rem;">Trả lời sai bất kỳ câu điểm liệt nào là trượt ngay, dù tất cả các câu khác đều đúng.</p>
+</div>
+
+<!-- FILTER TABS -->
+<div class="section" style="padding-bottom:0;">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+    <div>
+      <h2 class="section-title" style="margin-bottom:2px;">Tổng hợp theo hạng bằng</h2>
+      <p class="section-sub" style="margin-bottom:0;">Chọn hạng để lọc hoặc xem tất cả</p>
+    </div>
+    <div id="filter-wrap" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+  </div>
+</div>
+
+<!-- MODE: Xem hoặc Quiz -->
+<div class="section" style="padding-top:0;">
+  <div style="display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;">
+    <button class="btn btn-primary"  id="btn-mode-browse" onclick="setViewMode('browse')">📖 Xem & Học</button>
+    <button class="btn btn-ghost"    id="btn-mode-quiz"   onclick="setViewMode('quiz')">🎯 Luyện tập</button>
+  </div>
+
+  <!-- BROWSE MODE -->
+  <div id="browse-mode">
+    <div id="critical-list" style="display:flex;flex-direction:column;gap:16px;"></div>
+  </div>
+
+  <!-- QUIZ MODE -->
+  <div id="quiz-mode" style="display:none;">
+    <div class="question-card" id="crit-question-card">
+      <div class="q-label">
+        CÂU <span id="crit-q-num">1</span>/<span id="crit-q-total">5</span>
+        <span class="q-critical-tag">⚠️ Điểm liệt</span>
+      </div>
+      <div class="q-text" id="crit-q-text"></div>
+      <div class="options" id="crit-options"></div>
+      <div class="q-explain" id="crit-explain"></div>
+    </div>
+    <div class="q-nav" style="margin-top:16px;">
+      <button class="btn btn-ghost" id="crit-prev" onclick="critPrev()">← Câu trước</button>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <span id="crit-score-live" style="font-size:.88rem;color:var(--text-muted);"></span>
+        <button class="btn btn-primary" id="crit-next" onclick="critNext()">Câu tiếp →</button>
+      </div>
+    </div>
+    <!-- Mini grid -->
+    <div class="sidebar-card" style="margin-top:16px;">
+      <div class="sb-title">Tiến độ</div>
+      <div class="q-grid" id="crit-q-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CHATBOT FAB -->
+
+<div class="chatbot-panel" id="chatbot-panel">
+  <div class="chatbot-header">
+    <div class="chatbot-avatar">🤖</div>
+    <div class="chatbot-header-info">
+      <div class="chatbot-name">AI Hỗ trợ Bằng Lái</div>
+      <div class="chatbot-status">Gemini AI · Sẵn sàng</div>
+    </div>
+    <button style="background:none;border:none;color:rgba(255,255,255,.7);cursor:pointer;font-size:.85rem;padding:4px 6px;" id="chatbot-key-btn">🔑</button>
+    <button class="chatbot-close" id="chatbot-close">✕</button>
+  </div>
+  <div class="chatbot-messages" id="chatbot-messages"></div>
+  <div class="chatbot-quick-btns">
+    <button class="quick-btn" data-msg="Tại sao câu điểm liệt lại quan trọng?">❓ Tại sao?</button>
+    <button class="quick-btn" data-msg="Quy định về nồng độ cồn khi lái xe">🍺 Nồng độ cồn</button>
+    <button class="quick-btn" data-msg="Cách xử lý khi mất phanh trên dốc">🛑 Mất phanh</button>
+  </div>
+  <div class="chatbot-input-wrap">
+    <textarea class="chatbot-input" id="chatbot-input" placeholder="Hỏi về câu điểm liệt..." rows="1"></textarea>
+    <button class="chatbot-send" id="chatbot-send">➤</button>
+  </div>
+</div>
+<div class="modal-overlay" id="chatbot-key-modal">
+  <div class="modal">
+    <div class="modal-title">🔑 Cài đặt Gemini API Key</div>
+    <div class="modal-sub">Lấy key miễn phí tại <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--primary)">aistudio.google.com</a></div>
+    <div class="form-group">
+      <label class="form-label">API Key</label>
+      <input type="password" class="form-input" id="gemini-key-input" placeholder="AIza...">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="cancel-key-btn">Huỷ</button>
+      <button class="btn btn-primary" id="save-key-btn">💾 Lưu</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/UI.js"></script>
+<script src="js/exam.js"></script>
+
+
+<script src="js/critical.js"></script>
+<script src="js/app.js"></script>
+<script>
+  // Chờ DOM tải xong để gọi các hàm khởi tạo giao diện chung
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof injectNavbar === 'function') injectNavbar('critical');
+    if (typeof initChatbotUI === 'function') initChatbotUI();
+    if (typeof initCriticalPage === 'function') initCriticalPage();
+  });
+</script>
+<script src="js/chatbot.js"></script>
+</body>
+</html>

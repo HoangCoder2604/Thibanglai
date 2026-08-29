@@ -1,0 +1,236 @@
+/* ============================================================
+   VARIABLES & RESET
+   ============================================================ */
+:root {
+  --primary:       #0052CC;
+  --primary-dark:  #003A99;
+  --primary-light: #E8F0FF;
+  --success:       #0A9E6E;
+  --success-light: #E6F7F2;
+  --danger:        #D63031;
+  --danger-light:  #FDEAEA;
+  --warning:       #F59E0B;
+  --warning-light: #FFFBEB;
+  --text:          #1A1F36;
+  --text-muted:    #6B7280;
+  --border:        #E5E7EB;
+  --bg:            #F4F6FB;
+  --white:         #FFFFFF;
+  --card-shadow:   0 2px 16px rgba(0,82,204,0.08);
+  --card-hover:    0 8px 32px rgba(0,82,204,0.15);
+  --radius:        14px;
+  --radius-sm:     8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6;}
+a{text-decoration:none;color:inherit;}
+img{max-width:100%;}
+
+/* ============================================================
+   HEADER / NAV
+   ============================================================ */
+.navbar{
+  background:var(--white);border-bottom:2px solid var(--primary-light);
+  position:sticky;top:0;z-index:200;
+  box-shadow:0 2px 12px rgba(0,82,204,0.07);
+}
+.navbar-inner{
+  max-width:1100px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;height:64px;
+}
+.nav-logo{display:flex;align-items:center;gap:10px;font-family:'Lexend',sans-serif;font-size:1.2rem;font-weight:700;color:var(--primary);}
+.nav-logo-icon{width:38px;height:38px;background:var(--primary);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+.nav-links{display:flex;align-items:center;gap:6px;}
+.nav-link{padding:8px 14px;border-radius:9px;font-size:0.88rem;font-weight:500;color:var(--text-muted);transition:all .2s;cursor:pointer;border:none;background:none;font-family:'Be Vietnam Pro',sans-serif;}
+.nav-link:hover{background:var(--primary-light);color:var(--primary);}
+.nav-link.active{background:var(--primary-light);color:var(--primary);font-weight:600;}
+.nav-user{display:flex;align-items:center;gap:10px;}
+.nav-avatar{width:36px;height:36px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.9rem;cursor:pointer;}
+.nav-dropdown{position:relative;}
+.nav-dropdown-menu{
+  position:absolute;right:0;top:calc(100% + 8px);
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:12px;min-width:180px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.12);
+  display:none;overflow:hidden;z-index:300;
+}
+.nav-dropdown:hover .nav-dropdown-menu{display:block;}
+.nav-dropdown-item{padding:10px 16px;font-size:0.88rem;cursor:pointer;transition:background .15s;display:flex;align-items:center;gap:8px;}
+.nav-dropdown-item:hover{background:var(--bg);}
+.nav-dropdown-item.danger{color:var(--danger);}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{
+  background:linear-gradient(135deg,var(--primary) 0%,#003399 100%);
+  color:white;text-align:center;padding:64px 24px 80px;
+  position:relative;overflow:hidden;
+}
+.hero::before{content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);font-size:.78rem;font-weight:600;padding:5px 14px;border-radius:20px;margin-bottom:16px;}
+.hero-title{font-family:'Lexend',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:700;margin-bottom:12px;line-height:1.2;}
+.hero-sub{font-size:1rem;opacity:.85;max-width:520px;margin:0 auto 32px;}
+.hero-stats{display:flex;justify-content:center;gap:40px;}
+.hero-stat{text-align:center;}
+.hero-stat strong{display:block;font-family:'Lexend',sans-serif;font-size:1.7rem;font-weight:700;}
+.hero-stat span{opacity:.75;font-size:.8rem;}
+
+/* ============================================================
+   SECTION / GRID
+   ============================================================ */
+.section{max-width:1100px;margin:0 auto;padding:40px 24px;}
+.section-title{font-family:'Lexend',sans-serif;font-size:1.35rem;font-weight:600;margin-bottom:6px;}
+.section-sub{color:var(--text-muted);font-size:.9rem;margin-bottom:28px;}
+
+.card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);box-shadow:var(--card-shadow);}
+.card-pad{padding:24px;}
+
+/* ============================================================
+   LICENSE CARDS
+   ============================================================ */
+.license-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;}
+.license-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:24px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden;}
+.license-card:hover{border-color:var(--primary);box-shadow:var(--card-hover);transform:translateY(-3px);}
+.license-card::after{content:'';position:absolute;top:0;left:0;right:0;height:4px;border-radius:var(--radius) var(--radius) 0 0;}
+.cat-a::after{background:#FF6B35;} .cat-b::after{background:#0052CC;}
+.cat-c::after{background:#0A9E6E;} .cat-d::after{background:#7B3FF2;}
+.lc-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;}
+.lc-badge{font-family:'Lexend',sans-serif;font-size:1.5rem;font-weight:700;width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;}
+.cat-a .lc-badge{background:#FF6B35;} .cat-b .lc-badge{background:#0052CC;}
+.cat-c .lc-badge{background:#0A9E6E;} .cat-d .lc-badge{background:#7B3FF2;}
+.lc-diff{font-size:.72rem;font-weight:600;padding:3px 9px;border-radius:20px;}
+.diff-easy{background:var(--success-light);color:var(--success);}
+.diff-medium{background:var(--warning-light);color:#B45309;}
+.diff-hard{background:var(--danger-light);color:var(--danger);}
+.lc-title{font-size:1.05rem;font-weight:600;margin-bottom:4px;}
+.lc-desc{font-size:.82rem;color:var(--text-muted);margin-bottom:16px;line-height:1.5;}
+.lc-meta{display:flex;gap:14px;font-size:.8rem;color:var(--text-muted);margin-bottom:16px;flex-wrap:wrap;}
+.lc-btn{width:100%;background:var(--primary-light);color:var(--primary);border:1.5px solid var(--primary);border-radius:10px;padding:10px;font-family:'Be Vietnam Pro',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.lc-btn:hover{background:var(--primary);color:white;}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn{padding:10px 22px;border-radius:10px;font-family:'Be Vietnam Pro',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;border:none;transition:all .2s;display:inline-flex;align-items:center;gap:6px;}
+.btn-primary{background:var(--primary);color:white;}
+.btn-primary:hover{background:var(--primary-dark);}
+.btn-ghost{background:var(--bg);color:var(--text-muted);border:1.5px solid var(--border);}
+.btn-ghost:hover{background:var(--border);color:var(--text);}
+.btn-success{background:var(--success);color:white;}
+.btn-danger{background:var(--danger);color:white;}
+.btn-outline{background:transparent;color:var(--primary);border:1.5px solid var(--primary);}
+.btn-outline:hover{background:var(--primary-light);}
+.btn-lg{padding:13px 32px;font-size:1rem;}
+.btn-sm{padding:6px 14px;font-size:.82rem;}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+.btn-block{width:100%;justify-content:center;}
+
+/* ============================================================
+   FORM ELEMENTS
+   ============================================================ */
+.form-group{margin-bottom:18px;}
+.form-label{display:block;font-size:.85rem;font-weight:600;margin-bottom:6px;color:var(--text);}
+.form-input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:'Be Vietnam Pro',sans-serif;font-size:.92rem;color:var(--text);background:var(--white);transition:border-color .2s;outline:none;}
+.form-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(0,82,204,.1);}
+.form-input.error{border-color:var(--danger);}
+.form-hint{font-size:.78rem;color:var(--text-muted);margin-top:5px;}
+.form-error{font-size:.78rem;color:var(--danger);margin-top:5px;display:none;}
+.form-error.show{display:block;}
+
+/* ============================================================
+   TOAST / ALERT
+   ============================================================ */
+.toast-wrap{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px;}
+.toast{background:var(--text);color:white;padding:12px 18px;border-radius:12px;font-size:.88rem;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.2);animation:slideUp .3s ease;max-width:320px;display:flex;align-items:center;gap:10px;}
+.toast.success{background:var(--success);}
+.toast.error{background:var(--danger);}
+.toast.warning{background:var(--warning);color:var(--text);}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+
+/* ============================================================
+   BADGE / TAG
+   ============================================================ */
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:.72rem;font-weight:600;padding:3px 9px;border-radius:20px;}
+.badge-primary{background:var(--primary-light);color:var(--primary);}
+.badge-success{background:var(--success-light);color:var(--success);}
+.badge-danger{background:var(--danger-light);color:var(--danger);}
+.badge-warning{background:var(--warning-light);color:#B45309;}
+
+/* ============================================================
+   PROGRESS
+   ============================================================ */
+.progress-wrap{background:var(--border);height:8px;border-radius:20px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--primary);border-radius:20px;transition:width .4s ease;}
+.progress-fill.success{background:var(--success);}
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--white);border-radius:20px;padding:32px;max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2);transform:translateY(20px);transition:transform .25s;}
+.modal-overlay.open .modal{transform:none;}
+.modal-title{font-family:'Lexend',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:8px;}
+.modal-sub{color:var(--text-muted);font-size:.88rem;margin-bottom:24px;}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:24px;}
+
+/* ============================================================
+   STAT CARDS
+   ============================================================ */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;}
+.stat-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;}
+.stat-val{font-family:'Lexend',sans-serif;font-size:1.8rem;font-weight:700;color:var(--primary);margin-bottom:4px;}
+.stat-label{font-size:.78rem;color:var(--text-muted);}
+.stat-card.success{border-color:var(--success);background:var(--success-light);}
+.stat-card.success .stat-val{color:var(--success);}
+.stat-card.danger{border-color:var(--danger);background:var(--danger-light);}
+.stat-card.danger .stat-val{color:var(--danger);}
+.stat-card.warning{border-color:var(--warning);background:var(--warning-light);}
+.stat-card.warning .stat-val{color:var(--warning);}
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes slideIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.fade-in{animation:fadeIn .35s ease;}
+.slide-in{animation:slideIn .3s ease;}
+
+/* ============================================================
+   CHATBOT FAB
+   ============================================================ */
+.chatbot-fab{
+  position:fixed;bottom:28px;right:28px;z-index:400;
+  width:56px;height:56px;border-radius:50%;
+  background:linear-gradient(135deg,#4F46E5,#7C3AED);
+  color:white;font-size:1.4rem;border:none;cursor:pointer;
+  box-shadow:0 4px 20px rgba(79,70,229,.4);
+  display:flex;align-items:center;justify-content:center;
+  transition:all .25s;
+}
+.chatbot-fab:hover{transform:scale(1.1);box-shadow:0 8px 28px rgba(79,70,229,.5);}
+.chatbot-fab .fab-badge{
+  position:absolute;top:-2px;right:-2px;
+  background:var(--danger);color:white;
+  width:18px;height:18px;border-radius:50%;
+  font-size:.65rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid white;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media(max-width:640px){
+  .navbar-inner{padding:0 16px;}
+  .nav-links{gap:2px;}
+  .nav-link{padding:6px 10px;font-size:.82rem;}
+  .hero{padding:48px 16px 60px;}
+  .hero-stats{gap:24px;}
+  .section{padding:28px 16px;}
+  .stat-grid{grid-template-columns:repeat(2,1fr);}
+}
