@@ -19,12 +19,17 @@ const Auth = (() => {
     supabaseClient.auth.signOut();
   }
 
+  // 1. Đăng ký tài khoản (Yêu cầu xác thực email)
   async function register({ name, email, password }) {
     try {
+      // Lấy URL hiện tại để khi người dùng bấm vào link xác nhận trong email sẽ quay về đúng trang
+      const redirectTo = window.location.origin + '/auth.html'; 
+
       const { data, error } = await supabaseClient.auth.signUp({
         email,
         password,
         options: {
+          emailRedirectTo: redirectTo,
           data: { name, stats: { exams: 0, passed: 0, totalCorrect: 0, totalQ: 0 } }
         }
       });
@@ -34,11 +39,20 @@ const Auth = (() => {
       const user = data.user;
       if (!user) return { ok: false, msg: 'Không thể tạo tài khoản!' };
 
+      // Nếu Supabase yêu cầu xác thực email, user.identities có thể trống hoặc session là null
+      if (!data.session) {
+        return { 
+          ok: true, 
+          needsVerification: true, 
+          msg: 'Đăng ký thành công! Vui lòng kiểm tra hộp thư email của bạn để xác thực tài khoản trước khi đăng nhập.' 
+        };
+      }
+
       const safeUser = {
         id: user.id,
         name: name || 'Học viên',
         email: user.email,
-        created_at: user.created_at, // <-- Bổ sung ngày khởi tạo tài khoản
+        created_at: user.created_at,
         stats: { exams: 0, passed: 0, totalCorrect: 0, totalQ: 0 }
       };
 
@@ -49,6 +63,7 @@ const Auth = (() => {
     }
   }
 
+  // 2. Đăng nhập (Kiểm tra xem mail đã được xác thực chưa)
   async function login({ email, password }) {
     try {
       const { data, error } = await supabaseClient.auth.signInWithPassword({
@@ -56,7 +71,12 @@ const Auth = (() => {
         password
       });
 
-      if (error) return { ok: false, msg: 'Email hoặc mật khẩu không chính xác!' };
+      if (error) {
+        if (error.message.includes('Email not confirmed')) {
+          return { ok: false, msg: 'Email của bạn chưa được xác thực. Vui lòng kiểm tra hộp thư!' };
+        }
+        return { ok: false, msg: 'Email hoặc mật khẩu không chính xác!' };
+      }
 
       const user = data.user;
       const metadata = user.user_metadata || {};
@@ -65,13 +85,42 @@ const Auth = (() => {
         id: user.id,
         name: metadata.name || metadata.full_name || 'Học viên',
         email: user.email,
-        created_at: user.created_at, // <-- Bổ sung ngày khởi tạo tài khoản từ Supabase
+        created_at: user.created_at,
         user_metadata: metadata,
         stats: metadata.stats || { exams: 0, passed: 0, totalCorrect: 0, totalQ: 0 }
       };
 
       saveSession(safeUser);
       return { ok: true, user: safeUser };
+    } catch (err) {
+      return { ok: false, msg: 'Lỗi kết nối máy chủ!' };
+    }
+  }
+
+  // 3. Quên mật khẩu (Gửi yêu cầu reset về email)
+  async function forgotPassword(email) {
+    try {
+      const redirectTo = window.location.origin + '/auth.html?reset=true';
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+        redirectTo: redirectTo,
+      });
+
+      if (error) return { ok: false, msg: error.message };
+      return { ok: true, msg: 'Đã gửi liên kết đặt lại mật khẩu vào email của bạn. Vui lòng kiểm tra hộp thư!' };
+    } catch (err) {
+      return { ok: false, msg: 'Lỗi kết nối máy chủ!' };
+    }
+  }
+
+  // 4. Cập nhật mật khẩu mới (Dùng khi người dùng bấm từ link trong email quên mật khẩu)
+  async function updatePassword(newPassword) {
+    try {
+      const { data, error } = await supabaseClient.auth.updateUser({
+        password: newPassword
+      });
+
+      if (error) return { ok: false, msg: error.message };
+      return { ok: true, msg: 'Đổi mật khẩu thành công! Bạn có thể đăng nhập bằng mật khẩu mới.' };
     } catch (err) {
       return { ok: false, msg: 'Lỗi kết nối máy chủ!' };
     }
@@ -134,37 +183,16 @@ const Auth = (() => {
     }
   }
 
-  async function migrateLocalUsersToSupabase() {
-    const rawUsers = localStorage.getItem('tbl_users');
-    if (!rawUsers) return;
-
-    try {
-      const users = JSON.parse(rawUsers);
-      if (Array.isArray(users)) {
-        for (const u of users) {
-          if (!u.email || !u.password) continue;
-          let pwd = u.password;
-          try { pwd = atob(u.password); } catch(e){}
-          await supabaseClient.auth.signUp({
-            email: u.email,
-            password: pwd,
-            options: { data: { name: u.name || 'Học viên' } }
-          });
-        }
-      }
-    } catch(e) {}
-    localStorage.removeItem('tbl_users');
-  }
-
   return {
     register,
     login,
+    forgotPassword,
+    updatePassword,
     logout,
     currentUser,
     requireAuth,
     updateProfile,
-    renderHeaderUser,
-    migrateLocalUsersToSupabase
+    renderHeaderUser
   };
 })();
 

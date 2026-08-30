@@ -22,9 +22,9 @@
     </div>
 
     <!-- Tabs -->
-    <div class="auth-tabs">
-      <button class="auth-tab active" id="tab-login"    onclick="switchTab('login')">Đăng nhập</button>
-      <button class="auth-tab"        id="tab-register" onclick="switchTab('register')">Đăng ký</button>
+    <div class="auth-tabs" id="auth-tabs-container">
+      <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Đăng nhập</button>
+      <button class="auth-tab" id="tab-register" onclick="switchTab('register')">Đăng ký</button>
     </div>
 
     <!-- ── ĐĂNG NHẬP ── -->
@@ -44,6 +44,11 @@
           <button class="password-toggle" onclick="togglePwd('login-password', this)" type="button">👁</button>
         </div>
         <div class="form-error" id="login-pass-err"></div>
+      </div>
+
+      <!-- Nút Quên mật khẩu -->
+      <div style="text-align: right; margin-bottom: 15px;">
+        <a href="javascript:void(0)" onclick="switchTab('forgot')" style="font-size: 13px; color: var(--primary, #0066cc); text-decoration: none;">Quên mật khẩu?</a>
       </div>
 
       <button class="btn btn-primary btn-block btn-lg" id="login-btn" onclick="doLogin()">
@@ -103,6 +108,43 @@
       </div>
     </div>
 
+    <!-- ── QUÊN MẬT KHẨU / ĐẶT LẠI MẬT KHẨU ── -->
+    <div class="auth-form" id="form-forgot">
+      <div class="auth-title" id="forgot-title-text">Lấy lại mật khẩu 🔑</div>
+      <div class="auth-sub" id="forgot-sub-text">Nhập email của bạn để nhận liên kết đặt lại mật khẩu</div>
+
+      <!-- Form nhập email để gửi link reset -->
+      <div id="forgot-step-send">
+        <div class="form-group">
+          <label class="form-label">Email tài khoản</label>
+          <input class="form-input" type="email" id="forgot-email" placeholder="example@email.com">
+          <div class="form-error" id="forgot-email-err"></div>
+        </div>
+        <button class="btn btn-primary btn-block btn-lg" id="forgot-btn" onclick="doForgotPassword()">
+          Gửi link đặt lại mật khẩu
+        </button>
+      </div>
+
+      <!-- Form nhập mật khẩu mới (Hiện ra khi người dùng click vào link reset từ email gửi về) -->
+      <div id="forgot-step-update" style="display: none;">
+        <div class="form-group">
+          <label class="form-label">Mật khẩu mới</label>
+          <div class="password-wrap">
+            <input class="form-input" type="password" id="new-password" placeholder="Tối thiểu 6 ký tự">
+            <button class="password-toggle" onclick="togglePwd('new-password', this)" type="button">👁</button>
+          </div>
+          <div class="form-error" id="new-password-err"></div>
+        </div>
+        <button class="btn btn-primary btn-block btn-lg" id="update-pass-btn" onclick="doUpdatePassword()">
+          Cập nhật mật khẩu mới
+        </button>
+      </div>
+
+      <div class="auth-footer" style="margin-top: 20px;">
+        Quay lại <a onclick="switchTab('login')">Đăng nhập</a>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -119,20 +161,38 @@
     if (typeof Auth.migrateLocalUsersToSupabase === 'function') {
       Auth.migrateLocalUsersToSupabase();
     }
+
+    // Kiểm tra xem URL có phải đang ở chế độ reset password hay không (Supabase trả về access_token hoặc type=recovery)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('reset') === 'true' || window.location.hash.includes('type=recovery')) {
+      switchTab('forgot');
+      document.getElementById('forgot-title-text').textContent = 'Tạo mật khẩu mới 🔒';
+      document.getElementById('forgot-sub-text').textContent = 'Nhập mật khẩu mới cho tài khoản của bạn';
+      document.getElementById('forgot-step-send').style.display = 'none';
+      document.getElementById('forgot-step-update').style.display = 'block';
+    }
   });
 
-  // Nếu đã đăng nhập thì redirect về trang chủ
-  if (Auth.currentUser()) window.location.href = 'index.html';
+  // Nếu đã đăng nhập thì redirect về trang chủ (trừ khi đang thao tác reset password)
+  const urlParamsCheck = new URLSearchParams(window.location.search);
+  if (Auth.currentUser() && urlParamsCheck.get('reset') !== 'true' && !window.location.hash.includes('type=recovery')) {
+    window.location.href = 'index.html';
+  }
 
   // Lấy redirect url từ query string
-  const params   = new URLSearchParams(window.location.search);
+  const params  = new URLSearchParams(window.location.search);
   const redirect = params.get('redirect') || 'index.html';
 
   function switchTab(tab) {
     document.getElementById('tab-login').classList.toggle('active',    tab === 'login');
     document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+    
     document.getElementById('form-login').classList.toggle('active',    tab === 'login');
     document.getElementById('form-register').classList.toggle('active', tab === 'register');
+    document.getElementById('form-forgot').classList.toggle('active',   tab === 'forgot');
+    
+    // Ẩn/hiện thanh tabs chính nếu đang ở màn hình quên mật khẩu
+    document.getElementById('auth-tabs-container').style.display = (tab === 'forgot') ? 'none' : 'flex';
     clearErrors();
   }
 
@@ -146,14 +206,19 @@
     if (!el) return;
     el.textContent = msg;
     el.classList.add('show');
-    // highlight input
-    const inputId = id.replace('-err','').replace('login-email','login-email').replace('login-pass','login-password').replace('reg-name','reg-name').replace('reg-email','reg-email').replace('reg-pass','reg-password').replace('reg-confirm','reg-confirm');
-    document.getElementById(inputId)?.classList.add('error');
+    
+    // Tìm input tương ứng dựa trên ID lỗi để highlight đỏ viền
+    let inputId = id.replace('-err','');
+    if(inputId === 'login-pass') inputId = 'login-password';
+    if(inputId === 'new-password') inputId = 'new-password';
+    const inputEl = document.getElementById(inputId);
+    if(inputEl) inputEl.classList.add('error');
   }
 
   function togglePwd(id, btn) {
     const inp = document.getElementById(id);
-    if (inp.type === 'password') { inp.type = 'text';      btn.textContent = '🙈'; }
+    if (!inp) return;
+    if (inp.type === 'password') { inp.type = 'text';     btn.textContent = '🙈'; }
     else                         { inp.type = 'password'; btn.textContent = '👁'; }
   }
 
@@ -187,7 +252,7 @@
     const password = document.getElementById('reg-password').value;
     const confirm  = document.getElementById('reg-confirm').value;
     let valid = true;
-    if (!name)               { showErr('reg-name-err',    'Vui lòng nhập họ tên'); valid = false; }
+    if (!name)                    { showErr('reg-name-err',    'Vui lòng nhập họ tên'); valid = false; }
     if (!email || !email.includes('@')) { showErr('reg-email-err', 'Email không hợp lệ'); valid = false; }
     if (password.length < 6) { showErr('reg-pass-err',    'Mật khẩu tối thiểu 6 ký tự'); valid = false; }
     if (password !== confirm) { showErr('reg-confirm-err', 'Mật khẩu xác nhận không khớp'); valid = false; }
@@ -200,10 +265,64 @@
     if (btn) { btn.disabled = false; btn.textContent = '✅ Tạo tài khoản'; }
 
     if (res.ok) {
-      if (typeof Toast !== 'undefined') Toast.success('Tạo tài khoản thành công! Chào mừng ' + res.user.name);
-      setTimeout(() => window.location.href = redirect, 800);
+      if (res.needsVerification) {
+        if (typeof Toast !== 'undefined') Toast.success(res.msg);
+        alert(res.msg); // Thông báo trực quan yêu cầu kiểm tra mail
+        switchTab('login');
+      } else {
+        if (typeof Toast !== 'undefined') Toast.success('Tạo tài khoản thành công! Chào mừng ' + res.user.name);
+        setTimeout(() => window.location.href = redirect, 800);
+      }
     } else {
       showErr('reg-email-err', res.msg);
+    }
+  }
+
+  // Gửi yêu cầu quên mật khẩu
+  async function doForgotPassword() {
+    clearErrors();
+    const email = document.getElementById('forgot-email').value.trim();
+    if (!email || !email.includes('@')) {
+      showErr('forgot-email-err', 'Vui lòng nhập email hợp lệ');
+      return;
+    }
+
+    const btn = document.getElementById('forgot-btn');
+    btn.disabled = true; btn.textContent = 'Đang gửi...';
+
+    const res = await Auth.forgotPassword(email);
+    btn.disabled = false; btn.textContent = 'Gửi link đặt lại mật khẩu';
+
+    if (res.ok) {
+      if (typeof Toast !== 'undefined') Toast.success(res.msg);
+      alert(res.msg);
+      switchTab('login');
+    } else {
+      showErr('forgot-email-err', res.msg);
+    }
+  }
+
+  // Cập nhật mật khẩu mới sau khi bấm từ link trong email
+  async function doUpdatePassword() {
+    clearErrors();
+    const newPassword = document.getElementById('new-password').value;
+    if (!newPassword || newPassword.length < 6) {
+      showErr('new-password-err', 'Mật khẩu mới tối thiểu 6 ký tự');
+      return;
+    }
+
+    const btn = document.getElementById('update-pass-btn');
+    btn.disabled = true; btn.textContent = 'Đang cập nhật...';
+
+    const res = await Auth.updatePassword(newPassword);
+    btn.disabled = false; btn.textContent = 'Cập nhật mật khẩu mới';
+
+    if (res.ok) {
+      if (typeof Toast !== 'undefined') Toast.success(res.msg);
+      alert(res.msg);
+      window.location.href = 'auth.html';
+    } else {
+      showErr('new-password-err', res.msg);
     }
   }
 
@@ -219,7 +338,11 @@
   document.addEventListener('keydown', e => {
     if (e.key !== 'Enter') return;
     if (document.getElementById('form-login').classList.contains('active')) doLogin();
-    else doRegister();
+    else if (document.getElementById('form-register').classList.contains('active')) doRegister();
+    else if (document.getElementById('form-forgot').classList.contains('active')) {
+      if(document.getElementById('forgot-step-send').style.display !== 'none') doForgotPassword();
+      else doUpdatePassword();
+    }
   });
 </script>
 </body>
